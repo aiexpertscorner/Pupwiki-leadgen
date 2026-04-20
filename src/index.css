@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Krub:wght@400;500;600;700&display=swap');
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Krub", sans-serif;
+  
+  --color-brand-primary: #2563eb;
+  --color-brand-primary-hover: #1d4ed8;
+  --color-surface-base: #f1f5f9;
+  --color-surface-card: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-border-subtle: #e2e8f0;
+}
+
+body {
+  @apply bg-surface-base text-slate-800 font-sans;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-display font-semibold tracking-tight text-slate-900;
+}

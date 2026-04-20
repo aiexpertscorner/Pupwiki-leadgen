@@ -1,0 +1,6 @@
+{
+  "name": "Pupwiki",
+  "description": "Comprehensive Database for Dog Breeds and Veterinary Insights.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["Breed Analytics", "Veterinary Data", "Insurance Comparison"]
+}
