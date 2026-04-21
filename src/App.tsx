@@ -2,23 +2,54 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Header, Footer } from '@/src/components/Navigation';
 import { BreedCard } from '@/src/components/BreedCard';
 import { BreedDetail } from '@/src/components/BreedDetail';
-import { LeadWidget } from '@/src/components/LeadWidget';
+import { DogQuiz } from '@/src/components/DogQuiz';
+import { BreedFinderQuiz, FinderData } from '@/src/components/BreedFinderQuiz';
+import { CustomProfile } from '@/src/pages/CustomProfile';
+import { MatchResults } from '@/src/pages/MatchResults';
 import { FilterSection } from '@/src/components/FilterSection';
+import { SmartImage } from '@/src/components/ui/SmartImage';
 import { breeds, BreedSize } from '@/src/data/breeds';
-import { Search, ShieldCheck, ChevronRight, Dog, SlidersHorizontal, Brain, HeartPulse, BarChart3 } from 'lucide-react';
+import { Search, ShieldCheck, ChevronRight, Dog, SlidersHorizontal, Brain, HeartPulse, BarChart3, Sparkles, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
+import { MethodologyPage, EditorialPolicy } from '@/src/components/InfoPages';
+
+type AppView = 'home' | 'quiz' | 'discovery-quiz' | 'custom' | 'match-results' | 'detail' | 'methodology' | 'editorial';
+
 export default function App() {
+  const [view, setView] = useState<AppView>('home');
   const [selectedBreedSlug, setSelectedBreedSlug] = useState<string | null>(null);
+  const [quizData, setQuizData] = useState<any>(null);
+  const [finderData, setFinderData] = useState<FinderData | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSize, setSelectedSize] = useState<BreedSize | 'All'>('All');
   const [selectedTemperament, setSelectedTemperament] = useState<string[]>([]);
   const [selectedOrigin, setSelectedOrigin] = useState<string | 'All'>('All');
+  const [selectedType, setSelectedType] = useState<'All' | 'Purebred' | 'Crossbreed'>('All');
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
   const origins = useMemo(() => {
     return Array.from(new Set(breeds.map(b => b.origin))).sort();
   }, []);
+
+  const filteredBreeds = useMemo(() => {
+    return breeds.filter(b => {
+      const matchSearch = b.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchSize = selectedSize === 'All' || b.size === selectedSize;
+      const matchOrigin = selectedOrigin === 'All' || b.origin === selectedOrigin;
+      const matchType = selectedType === 'All' || 
+        (selectedType === 'Purebred' && !b.isCrossbreed) || 
+        (selectedType === 'Crossbreed' && b.isCrossbreed);
+      const matchTemp = selectedTemperament.length === 0 || 
+        selectedTemperament.every(t => b.temperament.includes(t));
+      
+      return matchSearch && matchSize && matchOrigin && matchTemp && matchType;
+    });
+  }, [searchQuery, selectedSize, selectedOrigin, selectedTemperament, selectedType]);
+
+  const selectedBreedData = useMemo(() => {
+    return breeds.find(b => b.slug === selectedBreedSlug);
+  }, [selectedBreedSlug]);
 
   const toggleTemperament = (temp: string) => {
     setSelectedTemperament(prev => 
@@ -26,21 +57,27 @@ export default function App() {
     );
   };
 
-  const filteredBreeds = useMemo(() => {
-    return breeds.filter(b => {
-      const matchSearch = b.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchSize = selectedSize === 'All' || b.size === selectedSize;
-      const matchOrigin = selectedOrigin === 'All' || b.origin === selectedOrigin;
-      const matchTemp = selectedTemperament.length === 0 || 
-        selectedTemperament.every(t => b.temperament.includes(t));
-      
-      return matchSearch && matchSize && matchOrigin && matchTemp;
-    });
-  }, [searchQuery, selectedSize, selectedOrigin, selectedTemperament]);
+  const handleQuizComplete = (data: any) => {
+    setQuizData(data);
+    setView('custom');
+    window.scrollTo(0, 0);
+  };
 
-  const selectedBreedData = useMemo(() => {
-    return breeds.find(b => b.slug === selectedBreedSlug);
-  }, [selectedBreedSlug]);
+  const handleFinderComplete = (data: FinderData) => {
+    setFinderData(data);
+    setView('match-results');
+    window.scrollTo(0, 0);
+  };
+
+  const handleNavigate = (target: any) => {
+    if (typeof target === 'string') {
+      setView(target as AppView);
+    } else if (target?.type === 'detail') {
+      setSelectedBreedSlug(target.slug);
+      setView('detail');
+      window.scrollTo(0, 0);
+    }
+  };
 
   // Lock scroll when drawer is open
   useEffect(() => {
@@ -52,82 +89,94 @@ export default function App() {
   }, [isFilterDrawerOpen]);
 
   return (
-    <div className="min-h-screen flex flex-col pt-16 selection:bg-brand-primary/20 selection:text-brand-primary font-sans antialiased">
+    <div className="min-h-screen flex flex-col pt-16 selection:bg-brand-primary/20 selection:text-brand-primary font-sans antialiased bg-surface-bg text-text-secondary">
       <Header />
 
       <main className="flex-1 overflow-x-hidden">
         <AnimatePresence mode="wait">
-          {!selectedBreedSlug ? (
+          {view === 'home' && (
             <motion.div 
               key="home"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-12 md:space-y-20 pb-20 bg-slate-50"
+              className="space-y-12 md:space-y-20 pb-20"
             >
-              {/* Home Hero */}
-              <section className="relative min-h-[70vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden bg-white border-b border-slate-100">
+              {/* Reworked Homepage Hero: Focus on Discovery & Personalization */}
+              <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center justify-center overflow-hidden border-b border-divider">
                  <div className="absolute inset-0 z-0">
-                   <img 
+                   <SmartImage 
                     src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=2000" 
-                    className="w-full h-full object-cover opacity-5 lg:opacity-10 scale-105"
-                    referrerPolicy="no-referrer"
+                    className="w-full h-full opacity-10 scale-105"
                     alt="HeroBackground"
                    />
-                   <div className="absolute inset-0 bg-gradient-to-b from-white via-white/60 to-white" />
+                   <div className="absolute inset-0 bg-gradient-to-b from-surface-bg via-surface-bg/40 to-surface-bg" />
                  </div>
 
-                 <div className="relative z-10 max-w-5xl mx-auto px-4 text-center space-y-8 md:space-y-12 py-12 md:py-20">
-                   <motion.div 
-                     initial={{ scale: 0.9, opacity: 0 }}
-                     animate={{ scale: 1, opacity: 1 }}
-                     className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 bg-brand-primary/5 border border-brand-primary/10 rounded-full text-brand-primary text-[10px] font-black uppercase tracking-[0.3em]"
-                   >
-                     <ShieldCheck size={14} />
-                     US Market Strategy 2026
-                   </motion.div>
-                   
-                   <div className="space-y-4">
-                    <h1 className="text-5xl md:text-8xl lg:text-[140px] font-display font-black uppercase leading-[0.82] tracking-tighter text-slate-900">
-                      The <span className="text-brand-primary">Data</span> Wiki for <span className="italic text-slate-200">Every</span> Breed.
-                    </h1>
-                    <p className="text-base md:text-2xl text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed px-4">
-                      Programmatic health data, breed-specific insurance costs, and veterinary insights for 277+ breeds.
-                    </p>
-                   </div>
-                   
-                   <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 max-w-2xl mx-auto w-full">
-                     <div className="relative w-full group">
-                       <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" size={22} />
-                       <input 
-                         type="text"
-                         placeholder="Search 277+ Breeds..."
-                         value={searchQuery}
-                         onChange={(e) => setSearchQuery(e.target.value)}
-                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-14 pr-6 py-4 md:py-5 text-lg md:text-xl font-medium focus:outline-none focus:ring-2 focus:ring-brand-primary/10 focus:border-brand-primary transition-all shadow-sm placeholder:text-slate-300 text-slate-900"
-                       />
-                     </div>
-                     <button className="w-full sm:w-auto whitespace-nowrap px-10 py-4 md:py-5 bg-brand-primary hover:bg-brand-primary-hover text-white rounded-2xl font-black uppercase text-sm tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-brand-primary/20">
-                       Find Match
-                     </button>
-                   </div>
-                   
-                   <div className="flex flex-wrap justify-center gap-4 md:gap-8 pt-4 md:pt-8 opacity-20">
-                      {['VETERINARY REVIEWED', 'EVIDENCE BASED', 'TRUSTED DATA'].map((tag, i) => (
-                        <span key={i} className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-900">{tag}</span>
-                      ))}
-                   </div>
+                 <div className="relative z-10 max-w-5xl mx-auto px-4 text-center space-y-10 md:space-y-14 py-20 md:py-32">
+                    <motion.div 
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary/10 border border-brand-primary/20 rounded-full text-brand-primary text-[10px] font-black uppercase tracking-[0.3em]"
+                    >
+                      <Sparkles size={14} className="animate-pulse" />
+                      Discover Your Pup's Perfect Life
+                    </motion.div>
+                    
+                    <div className="space-y-4">
+                     <h1 className="text-6xl md:text-8xl lg:text-[140px] font-display font-black uppercase leading-[0.80] tracking-tighter text-text-primary">
+                       Your Dog. <br/>
+                       The <span className="text-brand-primary italic">Full</span> Story.
+                     </h1>
+                     <p className="text-xl md:text-3xl text-text-secondary font-bold max-w-2xl mx-auto leading-tight px-4">
+                       Everything you need to know about your dog, translated from vet-talk into <span className="text-brand-primary">plain English</span>.
+                     </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto w-full px-4">
+                       <button 
+                         onClick={() => setView('quiz')}
+                         className="group relative flex flex-col items-center gap-6 p-10 bg-surface-main border border-divider rounded-[40px] hover:border-brand-primary/40 transition-all hover:shadow-[0_30px_80px_-20px_rgba(244,194,13,0.2)] text-left"
+                       >
+                         <div className="w-20 h-20 bg-brand-primary/10 rounded-3xl flex items-center justify-center text-brand-primary mb-2 group-hover:scale-110 transition-transform">
+                            <ShieldCheck size={40} />
+                         </div>
+                         <div className="text-center space-y-2">
+                           <h3 className="text-2xl font-display font-black uppercase text-text-primary">Already a Parent?</h3>
+                           <p className="text-xs text-text-muted font-bold uppercase tracking-widest leading-relaxed">Personalized health report & <br/>localized vet cost index.</p>
+                         </div>
+                         <div className="w-full py-4 bg-brand-primary text-surface-bg rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] flex items-center justify-center gap-2 mt-4">
+                           Generate My Report <ArrowRight size={14} />
+                         </div>
+                       </button>
+
+                       <button 
+                         onClick={() => setView('discovery-quiz')}
+                         className="group relative flex flex-col items-center gap-6 p-10 bg-surface-main border border-divider rounded-[40px] hover:border-brand-primary/40 transition-all hover:shadow-[0_30px_80px_-20px_rgba(244,194,13,0.2)] text-left"
+                       >
+                         <div className="w-20 h-20 bg-brand-primary/10 rounded-3xl flex items-center justify-center text-brand-primary mb-2 group-hover:scale-110 transition-transform">
+                            <Dog size={40} />
+                         </div>
+                         <div className="text-center space-y-2">
+                           <h3 className="text-2xl font-display font-black uppercase text-text-primary">Looking for a Pup?</h3>
+                           <p className="text-xs text-text-muted font-bold uppercase tracking-widest leading-relaxed">Discovery engine to find breeds <br/>matched to your lifestyle.</p>
+                         </div>
+                         <div className="w-full py-4 bg-brand-primary text-surface-bg rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] flex items-center justify-center gap-2 mt-4">
+                           Discovery Quiz <ArrowRight size={14} />
+                         </div>
+                       </button>
+                    </div>
+
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-text-dim opacity-60">Loved by 10,000+ happy dog parents</p>
                  </div>
               </section>
 
-              {/* Grid Section with Search/Filters */}
-              <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-4 gap-12">
-                
-                {/* Desktop Sidebar Filters */}
-                <aside className="hidden lg:block space-y-10 border-r border-slate-200 pr-12 h-fit sticky top-24">
-                  <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+              {/* Feed Content */}
+              <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-4 gap-12 pt-12">
+                <aside className="hidden lg:block space-y-10 border-r border-divider pr-12 h-fit sticky top-24">
+                  <div className="flex items-center gap-3 pb-4 border-b border-divider">
                     <SlidersHorizontal size={20} className="text-brand-primary" />
-                    <h2 className="text-xl font-display font-black uppercase tracking-tight">Filters</h2>
+                    <h2 className="text-xl font-display font-black uppercase tracking-tight">Browse Breeds</h2>
                   </div>
                   <FilterSection 
                     searchQuery={searchQuery}
@@ -138,29 +187,23 @@ export default function App() {
                     toggleTemperament={toggleTemperament}
                     selectedOrigin={selectedOrigin}
                     setSelectedOrigin={setSelectedOrigin}
+                    selectedType={selectedType}
+                    setSelectedType={setSelectedType}
                     origins={origins}
                   />
                 </aside>
 
-                {/* Main Breed Feed */}
                 <div className="lg:col-span-3 space-y-10">
-                  
-                  {/* Lead Gen Banner on Home - Optimized for Feed Flow */}
-                  <div className="mb-12">
-                    <LeadWidget variant="inline" />
-                  </div>
-
-                  <div className="flex items-center justify-between">
+                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                       <h2 className="text-3xl md:text-4xl font-display font-black uppercase tracking-tight text-slate-900">
-                         {filteredBreeds.length} Breeds Identified
+                       <h2 className="text-3xl md:text-5xl font-display font-black uppercase tracking-tight text-text-primary">
+                         Find Your Favorite
                        </h2>
-                       <p className="text-slate-400 font-bold text-sm tracking-wide">Showing verified results for 2026</p>
+                       <p className="text-text-muted font-bold text-sm tracking-wide uppercase">All breeds, simplified for humans</p>
                     </div>
-                    {/* Mobile Filter Toggle */}
                     <button 
                       onClick={() => setIsFilterDrawerOpen(true)}
-                      className="lg:hidden flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-900 shadow-sm active:scale-95 transition-all"
+                      className="lg:hidden flex items-center gap-2 px-5 py-3 bg-surface-main border border-border-subtle rounded-xl text-[10px] font-black uppercase tracking-widest text-text-primary"
                     >
                       <SlidersHorizontal size={14} className="text-brand-primary" />
                       Filters
@@ -171,60 +214,37 @@ export default function App() {
                     {filteredBreeds.map((breed) => (
                       <div key={breed.id} onClick={() => {
                           setSelectedBreedSlug(breed.slug);
+                          setView('detail');
                           window.scrollTo(0, 0);
-                      }}>
+                      }} className="cursor-pointer">
                         <BreedCard breed={breed} />
                       </div>
                     ))}
                   </div>
-
-                  {filteredBreeds.length === 0 && (
-                    <div className="text-center py-32 bg-white rounded-[40px] border-2 border-dashed border-slate-100 px-6">
-                      <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <Dog className="text-slate-200" size={40} />
-                      </div>
-                      <h3 className="text-2xl font-display font-black uppercase text-slate-900 mb-2">No Matches Found</h3>
-                      <p className="text-slate-400 font-bold mb-8">Try adjusting your filters to find similar breeds.</p>
-                      <button 
-                        onClick={() => {
-                          setSearchQuery('');
-                          setSelectedSize('All');
-                          setSelectedOrigin('All');
-                          setSelectedTemperament([]);
-                        }}
-                        className="px-8 py-3 bg-brand-primary text-white rounded-xl font-black uppercase text-[10px] tracking-widest shadow-lg shadow-brand-primary/20"
-                      >
-                        Reset All Filters
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
 
-              {/* Feature/Context Section */}
-              <section className="bg-white py-24 md:py-32 border-y border-slate-100">
+               {/* Helpful Info Section Reworked Tone */}
+               <section className="bg-surface-main py-24 md:py-32 border-y border-divider">
                  <div className="max-w-7xl mx-auto px-4 space-y-16 md:space-y-24">
                     <div className="text-center space-y-6 md:space-y-8 max-w-3xl mx-auto px-4">
-                      <div className="inline-block h-1 w-12 bg-slate-900 rounded-full mb-2" />
-                      <h2 className="text-4xl md:text-7xl font-display font-black uppercase tracking-tight leading-[0.95] text-slate-900">Programmatic Knowledge Clusters</h2>
-                      <p className="text-slate-400 font-medium text-lg md:text-xl leading-relaxed">Data-driven insights addressing common pain points across the North American market.</p>
+                      <div className="inline-block h-1.5 w-16 bg-brand-primary rounded-full mb-2" />
+                      <h2 className="text-4xl md:text-7xl font-display font-black uppercase tracking-tight leading-[0.95] text-text-primary">What you'll learn</h2>
+                      <p className="text-text-secondary font-medium text-lg md:text-xl leading-relaxed">No fluff, just the important stuff you need to know to be a better dog parent.</p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
                       {[
-                        { title: "Insurance & Costs", desc: "Average vet bills by breed and state for 2026. Detailed insurance comparisons.", icon: <ShieldCheck size={36} /> },
-                        { title: "Behavioral Analysis", desc: "Trainability metrics and separation anxiety solutions via Pupford.", icon: <Brain size={36} /> },
-                        { title: "Orthopedic Health", desc: "Senior support for dysplasia-prone breeds via Dog Cloud.", icon: <HeartPulse size={16} /> },
-                        { title: "Nutrition Logic", desc: "Caloric requirements processed through our Astro variation engine.", icon: <BarChart3 size={36} /> },
+                        { title: "Money Decisions", desc: "Understand your dog's likely costs. From kibble to vet visits, we break it down.", icon: <ShieldCheck size={36} /> },
+                        { title: "Health Watch", desc: "Know what to look out for. Simple guides on common breed health issues.", icon: <Brain size={36} /> },
+                        { title: "Long & Happy Life", desc: "Tips on keeping them fit, playful, and by your side for as long as possible.", icon: <HeartPulse size={36} /> },
+                        { title: "Training Fun", desc: "How they think and learn. Better ways to bond and train together.", icon: <BarChart3 size={36} /> },
                       ].map((cluster, i) => (
-                        <div key={i} className="p-8 md:p-10 bg-slate-50 border border-slate-100 rounded-[32px] space-y-6 md:space-y-8 hover:bg-white hover:border-brand-primary hover:shadow-xl hover:shadow-brand-primary/5 transition-all cursor-pointer group hover:-translate-y-2">
+                        <div key={i} className="p-8 md:p-10 bg-surface-card border border-border-subtle rounded-[32px] space-y-6 md:space-y-8 hover:bg-surface-elevated hover:border-brand-primary transition-all group">
                            <div className="text-brand-primary group-hover:scale-110 transition-transform origin-left">{cluster.icon}</div>
-                           <div className="space-y-3 md:space-y-4">
-                            <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight text-slate-900">{cluster.title}</h3>
-                            <p className="text-xs md:text-sm text-slate-400 leading-relaxed font-bold">{cluster.desc}</p>
-                           </div>
-                           <div className="pt-2 md:pt-4 flex items-center gap-2 text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                             Explore Cluster <ChevronRight size={14} />
+                           <div className="space-y-3">
+                             <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight text-text-primary">{cluster.title}</h3>
+                             <p className="text-sm text-text-muted leading-relaxed font-bold">{cluster.desc}</p>
                            </div>
                         </div>
                       ))}
@@ -232,24 +252,108 @@ export default function App() {
                  </div>
               </section>
             </motion.div>
-          ) : (
+          )}
+
+          {view === 'quiz' && (
+            <motion.div 
+              key="quiz"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="py-6 md:py-24"
+            >
+              <DogQuiz onComplete={handleQuizComplete} onBack={() => setView('home')} />
+            </motion.div>
+          )}
+
+          {view === 'discovery-quiz' && (
+            <motion.div 
+              key="discovery-quiz"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="py-6 md:py-24"
+            >
+              <BreedFinderQuiz onComplete={handleFinderComplete} onBack={() => setView('home')} />
+            </motion.div>
+          )}
+
+          {view === 'match-results' && finderData && (
+            <motion.div 
+              key="match-results"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <MatchResults 
+                finderData={finderData} 
+                onReset={() => setView('home')} 
+                onSelectBreed={(slug) => {
+                  setSelectedBreedSlug(slug);
+                  setView('detail');
+                  window.scrollTo(0, 0);
+                }}
+              />
+            </motion.div>
+          )}
+
+          {view === 'custom' && quizData && (
+            <motion.div 
+              key="custom"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <CustomProfile 
+                quizData={quizData} 
+                onReset={() => setView('home')} 
+                onNavigate={handleNavigate}
+              />
+            </motion.div>
+          )}
+
+          {view === 'detail' && selectedBreedData && (
             <motion.div 
               key="detail"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              className="pt-4 md:pt-8 bg-slate-50"
+              className="pt-4 md:pt-8"
             >
               <div className="max-w-7xl mx-auto px-4 mb-8">
                 <button 
-                  onClick={() => setSelectedBreedSlug(null)}
-                  className="flex items-center gap-3 text-[10px] font-black text-slate-400 hover:text-brand-primary transition-colors uppercase tracking-[0.3em] group"
+                  onClick={() => setView('home')}
+                  className="flex items-center gap-3 text-[10px] font-black text-text-dim hover:text-brand-primary transition-colors uppercase tracking-[0.3em] group"
                 >
                   <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} />
-                  Return to breeds
+                  Back to search
                 </button>
               </div>
-              {selectedBreedData && <BreedDetail breed={selectedBreedData} />}
+              <BreedDetail 
+                breed={selectedBreedData} 
+                onNavigate={handleNavigate}
+              />
+            </motion.div>
+          )}
+
+          {view === 'methodology' && (
+            <motion.div 
+              key="methodology"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <MethodologyPage onBack={() => setView('home')} />
+            </motion.div>
+          )}
+
+          {view === 'editorial' && (
+            <motion.div 
+              key="editorial"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <EditorialPolicy onBack={() => setView('home')} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -264,16 +368,14 @@ export default function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsFilterDrawerOpen(false)}
-              className="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm"
+              className="fixed inset-0 z-[60] bg-surface-bg/80 backdrop-blur-sm"
             />
             <motion.div 
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed bottom-0 left-0 right-0 z-[65] bg-white rounded-t-[32px] p-8 pb-12 max-h-[90vh] overflow-y-auto"
+              className="fixed bottom-0 left-0 right-0 z-[65] bg-surface-main rounded-t-[32px] p-8 pb-12 max-h-[90vh] overflow-y-auto border-t border-border-subtle"
             >
-              <div className="w-12 h-1.5 bg-slate-100 rounded-full mx-auto mb-8" />
               <FilterSection 
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
@@ -283,21 +385,17 @@ export default function App() {
                 toggleTemperament={toggleTemperament}
                 selectedOrigin={selectedOrigin}
                 setSelectedOrigin={setSelectedOrigin}
+                selectedType={selectedType}
+                setSelectedType={setSelectedType}
                 origins={origins}
                 onClose={() => setIsFilterDrawerOpen(false)}
               />
-              <button 
-                onClick={() => setIsFilterDrawerOpen(false)}
-                className="w-full mt-8 py-5 bg-slate-900 text-white rounded-2xl font-black uppercase text-sm tracking-widest shadow-xl active:scale-95 transition-all"
-              >
-                Apply 2026 Data Filters
-              </button>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      <Footer />
+      <Footer onNavigate={setView} />
     </div>
   );
 }

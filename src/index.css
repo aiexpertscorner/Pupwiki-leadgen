@@ -5,18 +5,39 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Krub", sans-serif;
   
-  --color-brand-primary: #2563eb;
-  --color-brand-primary-hover: #1d4ed8;
-  --color-surface-base: #f1f5f9;
-  --color-surface-card: #ffffff;
-  --color-surface-elevated: #ffffff;
-  --color-border-subtle: #e2e8f0;
+  --color-brand-primary: #F4C20D;
+  --color-brand-accent: #FFCC12;
+  --color-risk-low: #29C36A;
+  --color-risk-medium: #F0A83A;
+  --color-risk-high: #E05656;
+  
+  --color-surface-bg: #050505;
+  --color-surface-main: #101114;
+  --color-surface-card: #17181C;
+  --color-surface-soft: #1D1F24;
+  --color-surface-elevated: #20232A;
+  
+  --color-text-primary: #F5F6F7;
+  --color-text-secondary: #B6BBC6;
+  --color-text-muted: #7C838F;
+  --color-text-dim: #5E646F;
+  
+  --color-border-subtle: #2A2D35;
+  --color-divider: #23262D;
 }
 
 body {
-  @apply bg-surface-base text-slate-800 font-sans;
+  @apply bg-surface-bg text-text-secondary font-sans antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  @apply font-display font-semibold tracking-tight text-slate-900;
+  @apply font-display font-bold tracking-tight text-text-primary;
+}
+
+.premium-card {
+  @apply bg-surface-card border border-border-subtle rounded-3xl overflow-hidden transition-all duration-300;
+}
+
+.gold-glow {
+  @apply shadow-[0_0_20px_rgba(244,194,13,0.08)];
 }
