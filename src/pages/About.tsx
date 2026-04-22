@@ -11,9 +11,9 @@ const ABOUT_SCHEMA = {
     {
       '@type': 'AboutPage',
       '@id': 'https://pupwiki.com/about',
-      name: 'About PupWiki — Our Mission, Team & Methodology',
+      name: 'About PupWiki — Our Mission, Data Sources & Methodology',
       description:
-        'Learn about PupWiki\'s mission to provide authoritative, vet-reviewed dog breed data. Meet the veterinarians and data scientists who build and maintain the platform.',
+        'Learn about PupWiki\'s mission to make dog breed health data and insurance cost estimates accessible to every dog owner. Understand our sources, methodology, and editorial independence standards.',
       url: 'https://pupwiki.com/about',
       breadcrumb: {
         '@type': 'BreadcrumbList',
@@ -28,30 +28,6 @@ const ABOUT_SCHEMA = {
         name: 'PupWiki',
       },
     },
-    {
-      '@type': 'Person',
-      '@id': 'https://pupwiki.com/about#dr-sarah-mitchell',
-      name: 'Dr. Sarah Mitchell',
-      jobTitle: 'Lead Veterinary Advisor',
-      description: 'Board-certified veterinarian with a specialty in canine genetics and preventive medicine.',
-      worksFor: { '@id': 'https://pupwiki.com/#organization' },
-    },
-    {
-      '@type': 'Person',
-      '@id': 'https://pupwiki.com/about#james-chen',
-      name: 'James Chen',
-      jobTitle: 'Head of Data Science',
-      description: 'Actuarial scientist who designed the insurance-cost methodology powering PupWiki\'s breed profiles.',
-      worksFor: { '@id': 'https://pupwiki.com/#organization' },
-    },
-    {
-      '@type': 'Person',
-      '@id': 'https://pupwiki.com/about#dr-patricia-torres',
-      name: 'Dr. Patricia Torres',
-      jobTitle: 'Canine Behavior Specialist',
-      description: 'Applied animal behaviorist overseeing temperament profiles and lifestyle-matching algorithms.',
-      worksFor: { '@id': 'https://pupwiki.com/#organization' },
-    },
   ],
 };
 
@@ -61,7 +37,7 @@ const STATS = [
   { value: '81',    label: 'Breed Profiles'         },
   { value: '13',    label: 'Data Datasets'           },
   { value: '50',    label: 'US States Covered'       },
-  { value: '3',     label: 'Licensed DVMs On Staff'  },
+  { value: '3',     label: 'Public Data Sources'     },
 ];
 
 // ─── Trust pillars ────────────────────────────────────────────────────────────
@@ -69,23 +45,23 @@ const STATS = [
 const PILLARS = [
   {
     icon: ShieldCheck,
-    title:  'Vet-Reviewed Content',
-    body:   'Every health-risk profile and breed guide is reviewed by a licensed DVM before publication. No medical claim goes live without sign-off from our veterinary team.',
+    title:  'Source-Referenced Content',
+    body:   'Breed health information is compiled from publicly available sources including AKC breed health statements, OFA prevalence data, and published veterinary literature. All content is educational — always consult your veterinarian for guidance specific to your dog.',
   },
   {
     icon: Database,
     title:  'Actuarial Data Sources',
-    body:   'Insurance cost estimates derive from real actuarial filings — the same data insurance companies use — adjusted by breed, age bracket, and state cost index.',
+    body:   'Insurance cost estimates derive from public actuarial state filings and Forbes Advisor\'s summary of Veterinary Pet Insurance Co. data, adjusted by breed, age bracket, and state cost index. These are estimates, not insurance quotes.',
   },
   {
     icon: BookOpen,
     title:  'Editorial Independence',
-    body:   'Affiliate partnerships never influence breed rankings, health assessments, or quiz results. Our data speaks for itself; monetisation is always disclosed and separated.',
+    body:   'Affiliate partnerships never influence breed rankings, health information, or quiz results. Our data speaks for itself; monetisation is always disclosed and separated from editorial content.',
   },
   {
     icon: HeartPulse,
-    title:  'Monthly Data Updates',
-    body:   'Premium data goes stale fast. Our data pipeline refreshes breed health profiles, insurance rates, and geographic indices on a monthly cadence.',
+    title:  'Periodic Data Reviews',
+    body:   'We review and update breed health profiles, insurance rate data, and geographic indices on a regular basis to keep information current. Check the Methodology page for the most recent update date.',
   },
 ];
 
@@ -223,19 +199,20 @@ export const About = ({ onNavigate }: AboutProps) => {
           </div>
         </section>
 
-        {/* ── Team ── */}
+        {/* ── Data Sources ── */}
         <section className="max-w-4xl mx-auto px-4 py-16 md:py-20 space-y-10">
           <div className="space-y-3">
             <span className="section-eyebrow">
               <Users size={13} className="text-brand-primary" />
-              The Experts Behind the Data
+              Where the Data Comes From
             </span>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-text-primary">
-              Meet Our Advisory Team
+              Our Data Sources
             </h2>
             <p className="text-text-secondary max-w-xl leading-relaxed">
-              Every data point on PupWiki has a human expert accountable for its accuracy.
-              These are the practitioners who keep our standards high.
+              PupWiki compiles information from publicly available, breed-authority sources.
+              We do not generate or originate health or actuarial data — we translate and
+              present existing public information in a clear, accessible format.
             </p>
           </div>
 
@@ -243,6 +220,12 @@ export const About = ({ onNavigate }: AboutProps) => {
             {PUPWIKI_AUTHORS.map(author => (
               <AuthorCard key={author.name} author={author} />
             ))}
+          </div>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-sm text-text-secondary leading-relaxed">
+            <strong className="text-text-primary">Important:</strong> PupWiki is an informational reference,
+            not a veterinary service. Nothing on this site constitutes veterinary advice, diagnosis, or treatment.
+            Always consult a licensed veterinarian for guidance specific to your dog's health.
           </div>
         </section>
 

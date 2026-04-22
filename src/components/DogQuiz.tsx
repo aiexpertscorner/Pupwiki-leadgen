@@ -482,10 +482,10 @@ export const DogQuiz: React.FC<DogQuizProps> = ({ onComplete, onBack }) => {
                   <h2 className="text-3xl font-display font-black text-text-primary uppercase tracking-tight">Analyzing Data...</h2>
                   <div className="flex flex-col gap-2 max-w-xs mx-auto">
                     {[
-                      "Cross-referencing vet records",
-                      "Simulating clinical risks",
-                      "Calculating cost projections",
-                      "Generating custom tips"
+                      "Looking up breed health data",
+                      "Calculating cost estimates",
+                      "Compiling care information",
+                      "Generating your overview"
                     ].map((text, i) => (
                       <motion.div 
                         key={i}
@@ -517,7 +517,7 @@ export const DogQuiz: React.FC<DogQuizProps> = ({ onComplete, onBack }) => {
                     Your <span className="text-brand-primary">Custom Report</span> is Ready!
                   </h2>
                   <p className="text-text-muted font-bold text-lg max-w-sm mx-auto">
-                    We've combined our vet data with {data.name || 'your pup'}'s unique health profile.
+                    We've put together a breed health overview and cost estimate for {data.name || 'your pup'}.
                   </p>
                 </div>
 

@@ -102,31 +102,51 @@ const Avatar = ({ initials, photoUrl, size }: AvatarProps) => {
   );
 };
 
-// ─── Canonical author data (reused across About + pages) ─────────────────────
+// ─── Data source descriptions (replaces fabricated expert bios) ───────────────
+//
+// PupWiki does not currently employ named veterinary or actuarial reviewers.
+// Content is compiled from public breed-authority sources listed below.
+// This array is kept for structural reuse; populate with real team members
+// when a verified editorial team is in place.
 
-export const PUPWIKI_AUTHORS: Author[] = [
+export interface DataSource {
+  name:      string;
+  title:     string;
+  body:      string;
+  initials:  string;
+  tags:      string[];
+}
+
+export const PUPWIKI_DATA_SOURCES: DataSource[] = [
   {
-    name:        'Dr. Sarah Mitchell',
-    title:       'Lead Veterinary Advisor',
-    credentials: 'DVM · DACVIM · 14 Years Clinical Experience',
-    bio:         'Board-certified internist with a specialty in canine genetics and preventive medicine. Dr. Mitchell audits every health-risk profile on PupWiki and serves as the final authority on all medical content before publication.',
-    initials:    'SM',
-    expertise:   ['Canine Internal Medicine', 'Breed Genetics', 'Preventive Care'],
+    name:     'Breed Health Data',
+    title:    'Public Breed-Authority Sources',
+    body:     'Hereditary condition profiles are compiled from publicly available breed-health literature including AKC breed health statements, OFA (Orthopedic Foundation for Animals) prevalence data, and published veterinary epidemiology summaries. All content is educational and informational only.',
+    initials: 'BH',
+    tags:     ['AKC Breed Health', 'OFA Data', 'Veterinary Literature'],
   },
   {
-    name:        'James Chen',
-    title:       'Head of Data Science',
-    credentials: 'MS Actuarial Science · Former MetLife Analytics Lead',
-    bio:         'Former actuarial modeler who built the insurance-cost methodology powering all 81 breed profiles. James designed the three-variable premium engine (breed × age × state) and leads ongoing data-pipeline improvements.',
-    initials:    'JC',
-    expertise:   ['Actuarial Modeling', 'Pet Insurance Data', 'Statistical Engineering'],
+    name:     'Insurance Cost Estimates',
+    title:    'Actuarial & Market Data',
+    body:     'Monthly premium estimates are calculated from public actuarial state filings by licensed pet insurance carriers, cross-referenced with Forbes Advisor\'s summary of Veterinary Pet Insurance Co. data. All figures are estimates for planning purposes, not insurance quotes.',
+    initials: 'IC',
+    tags:     ['Actuarial Filings', 'Forbes Advisor Data', 'VPI Summary'],
   },
   {
-    name:        'Dr. Patricia Torres',
-    title:       'Canine Behavior Specialist',
-    credentials: 'PhD Applied Animal Behavior · Certified CAAB · 18 Years Research',
-    bio:         'Applied animal behaviorist whose work spans breed-specific behavioral research and family-compatibility science. Dr. Torres oversees temperament profiles and the lifestyle-matching algorithm behind the Breed Finder Quiz.',
-    initials:    'PT',
-    expertise:   ['Canine Behavior', 'Breed Temperament Profiling', 'Family Compatibility'],
+    name:     'Temperament & Behaviour Profiles',
+    title:    'Breed Standard & Registry Sources',
+    body:     'Temperament descriptors are drawn from AKC breed standards, UKC breed descriptions, and FCI breed documentation. Behavioural scores are relative indicators derived from those descriptions, not clinical assessments.',
+    initials: 'TB',
+    tags:     ['AKC Breed Standards', 'UKC Descriptions', 'FCI Documentation'],
   },
 ];
+
+// Legacy export kept for component compatibility — maps DataSource to Author shape
+export const PUPWIKI_AUTHORS: Author[] = PUPWIKI_DATA_SOURCES.map(ds => ({
+  name:        ds.name,
+  title:       ds.title,
+  credentials: ds.tags.join(' · '),
+  bio:         ds.body,
+  initials:    ds.initials,
+  expertise:   ds.tags,
+}));

@@ -130,8 +130,8 @@ export const ChefpawAd = ({
             <div className="flex flex-wrap gap-2">
               {[
                 { icon: Leaf,  label: 'Fresh Ingredients'   },
-                { icon: Zap,   label: 'Vet-Formulated'      },
-                { icon: Star,  label: 'AKC Featured'        },
+                { icon: Zap,   label: 'Custom Portions'     },
+                { icon: Star,  label: 'Home-Prepared Meals' },
               ].map(({ icon: Icon, label }) => (
                 <span
                   key={label}

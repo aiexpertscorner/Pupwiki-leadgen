@@ -90,7 +90,7 @@ export const BreedCard = ({ breed }: BreedCardProps) => {
         {/* Monthly Care Cost */}
         <div className="flex items-center justify-between pt-6 border-t border-divider mt-auto">
           <div className="flex flex-col">
-            <span className="text-[9px] md:text-[10px] font-black text-text-dim uppercase tracking-widest">Expected Care</span>
+            <span className="text-[9px] md:text-[10px] font-black text-text-dim uppercase tracking-widest">Est. Insurance</span>
             <div className="flex items-baseline gap-1">
               <span className="text-2xl md:text-3xl font-black text-brand-primary tracking-tighter">${breed.avgMonthlyInsurance}</span>
               <span className="text-xs md:text-sm font-bold text-text-dim">/mo</span>

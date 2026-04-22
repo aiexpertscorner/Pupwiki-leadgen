@@ -14,10 +14,7 @@ const METHODOLOGY_SCHEMA = {
       headline: 'PupWiki Data Methodology: Actuarial, Age & Geographic Cost Factors',
       description:
         'How PupWiki calculates breed-specific dog insurance cost estimates using licensed actuarial data, nonlinear age multipliers, and geographic indexing across all 50 US states.',
-      author: [
-        { '@type': 'Person', name: 'Dr. Sarah Mitchell', jobTitle: 'Lead Veterinary Advisor' },
-        { '@type': 'Person', name: 'James Chen',         jobTitle: 'Head of Data Science'    },
-      ],
+      author: { '@type': 'Organization', name: 'PupWiki Editorial Team' },
       publisher: {
         '@type': 'Organization',
         '@id':   'https://pupwiki.com/#organization',
@@ -153,10 +150,10 @@ export const MethodologyPage = ({ onBack }: { onBack: () => void }) => {
 
           {/* Meta row */}
           <div className="flex flex-wrap gap-8 pt-2 pb-6 border-b border-divider">
-            <MetaBadge label="Last System Audit"  value="April 21, 2026" />
-            <MetaBadge label="Data Stewardship"   value="Editorial Independence Board" />
-            <MetaBadge label="Veterinary Review"  value="Dr. Sarah Mitchell, DVM" />
-            <MetaBadge label="Actuarial Review"   value="James Chen, MS Actuarial Science" />
+            <MetaBadge label="Last Data Review"   value="April 21, 2026" />
+            <MetaBadge label="Data Stewardship"   value="PupWiki Editorial Team" />
+            <MetaBadge label="Primary Sources"    value="AKC · OFA · Actuarial Filings" />
+            <MetaBadge label="Coverage Limit"     value="$5,000 / year (estimate basis)" />
           </div>
         </header>
 
@@ -220,10 +217,11 @@ export const MethodologyPage = ({ onBack }: { onBack: () => void }) => {
           </div>
 
           <p className="text-text-secondary leading-relaxed pl-12">
-            Each breed's health-risk section is compiled from peer-reviewed veterinary studies and
-            clinical data, then audited by Dr. Sarah Mitchell before publication. Risk categories
-            (Low → Very High) represent the expected frequency and financial impact of genetic
-            conditions across the breed population.
+            Each breed's health information is compiled from publicly available breed-authority sources
+            including AKC breed health statements, OFA (Orthopedic Foundation for Animals) prevalence
+            data, and published veterinary epidemiology literature. Risk categories (Low → Very High)
+            represent relative frequency and estimated financial impact of commonly reported genetic
+            conditions across the breed population — not a diagnosis or prognosis for any individual dog.
           </p>
 
           <div className="pl-12 grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -259,10 +257,10 @@ export const MethodologyPage = ({ onBack }: { onBack: () => void }) => {
               <p className="font-display font-bold text-text-primary">How we maintain accuracy</p>
             </div>
             <p className="text-sm text-text-secondary leading-relaxed">
-              Every breed health profile is cross-referenced against the Pupwiki Breed Health
-              Profiles dataset and audited by our veterinary advisor before any update goes live.
-              "Risk Categories" are designed to help owners anticipate preventive care needs —
-              not to alarm. We flag uncertainty where data is limited or contested.
+              Breed health profiles are cross-referenced against multiple public breed-authority
+              sources (AKC, OFA, published veterinary literature). "Risk Categories" are designed
+              to help owners anticipate preventive care needs — not to diagnose or alarm.
+              We flag uncertainty where data is limited or inconsistent across sources.
             </p>
             <div className="flex gap-2 pt-2">
               <AlertTriangle size={14} className="text-amber-500 shrink-0 mt-0.5" />
@@ -326,14 +324,19 @@ export const MethodologyPage = ({ onBack }: { onBack: () => void }) => {
           ))}
         </section>
 
-        {/* Authors */}
+        {/* Data sources */}
         <section className="space-y-6">
-          <h2 className="text-xl font-display font-bold text-text-primary">Reviewed By</h2>
+          <h2 className="text-xl font-display font-bold text-text-primary">Primary Data Sources</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[PUPWIKI_AUTHORS[0], PUPWIKI_AUTHORS[1]].map(a => (
               <AuthorCard key={a.name} author={a} />
             ))}
           </div>
+          <p className="text-xs text-text-muted leading-relaxed">
+            PupWiki compiles and presents publicly available information. We do not generate
+            original veterinary or actuarial research. All cost figures are estimates for
+            planning purposes only and do not constitute insurance quotes or financial advice.
+          </p>
         </section>
       </motion.article>
     </>
@@ -387,8 +390,8 @@ export const EditorialPolicy = ({ onBack }: { onBack: () => void }) => {
           {[
             {
               icon: ShieldCheck,
-              title: 'Medical Integrity',
-              body:  'All health-related content is cross-referenced with the Pupwiki Breed Health Profiles dataset — updated monthly — and signed off by a licensed DVM before any change goes live.',
+              title: 'Source Integrity',
+              body:  'All breed health information is cross-referenced against publicly available breed-authority sources (AKC health statements, OFA data, published veterinary literature). Content is informational only — it is not a substitute for veterinary care.',
             },
             {
               icon: Database,
@@ -403,7 +406,7 @@ export const EditorialPolicy = ({ onBack }: { onBack: () => void }) => {
             {
               icon: BookOpen,
               title: 'Source Transparency',
-              body:  'Every data point links to its origin: actuarial filings, veterinary studies, or AKC records. We flag uncertainty and update content when better data emerges.',
+              body:  'Every data category references its origin: actuarial filings, AKC breed health statements, OFA data, or published literature. We flag uncertainty and update content when better public sources become available.',
             },
           ].map(({ icon: Icon, title, body }) => (
             <div
@@ -433,11 +436,11 @@ export const EditorialPolicy = ({ onBack }: { onBack: () => void }) => {
           </p>
           <ul className="space-y-2 text-sm text-text-secondary">
             {[
-              'Named, credentialed authors on all health and financial content',
-              'External veterinary review before publication',
-              'Transparent data sourcing with citable references',
-              'Regular audit cycle (minimum monthly) by the Editorial Independence Board',
-              'Clear separation between editorial content and affiliate recommendations',
+              'Content compiled from named, publicly verifiable source authorities (AKC, OFA, actuarial filings)',
+              'Transparent data sourcing with source references on the Methodology page',
+              'Regular content reviews to keep information current — see Methodology for last review date',
+              'Clear separation between editorial information and affiliate recommendations',
+              'Affiliate relationships contractually and editorially separated from data production',
             ].map(item => (
               <li key={item} className="flex items-start gap-2.5">
                 <CheckCircle size={15} className="text-green-600 shrink-0 mt-0.5" />
