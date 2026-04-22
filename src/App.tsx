@@ -13,8 +13,9 @@ import { Search, ShieldCheck, ChevronRight, Dog, SlidersHorizontal, Brain, Heart
 import { motion, AnimatePresence } from 'motion/react';
 
 import { MethodologyPage, EditorialPolicy } from '@/src/components/InfoPages';
+import { About } from '@/src/pages/About';
 
-type AppView = 'home' | 'quiz' | 'discovery-quiz' | 'custom' | 'match-results' | 'detail' | 'methodology' | 'editorial';
+type AppView = 'home' | 'quiz' | 'discovery-quiz' | 'custom' | 'match-results' | 'detail' | 'methodology' | 'editorial' | 'about';
 
 export default function App() {
   const [view, setView] = useState<AppView>('home');
@@ -89,8 +90,8 @@ export default function App() {
   }, [isFilterDrawerOpen]);
 
   return (
-    <div className="min-h-screen flex flex-col pt-16 selection:bg-brand-primary/20 selection:text-brand-primary font-sans antialiased bg-surface-bg text-text-secondary">
-      <Header />
+    <div className="min-h-screen flex flex-col pt-[7rem] selection:bg-brand-primary/20 selection:text-brand-primary font-sans antialiased bg-surface-bg text-text-secondary">
+      <Header onNavigate={handleNavigate} currentView={view} />
 
       <main className="flex-1 overflow-x-hidden">
         <AnimatePresence mode="wait">
@@ -347,13 +348,24 @@ export default function App() {
           )}
 
           {view === 'editorial' && (
-            <motion.div 
+            <motion.div
               key="editorial"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
               <EditorialPolicy onBack={() => setView('home')} />
+            </motion.div>
+          )}
+
+          {view === 'about' && (
+            <motion.div
+              key="about"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+            >
+              <About onNavigate={handleNavigate} />
             </motion.div>
           )}
         </AnimatePresence>

@@ -36,7 +36,7 @@ export const BreedCard = ({ breed }: BreedCardProps) => {
                Purebred
              </div>
            )}
-           <div className="px-2.5 py-1.5 bg-surface-bg/80 backdrop-blur-md rounded-lg text-[8px] md:text-[9px] font-black text-white uppercase tracking-widest border border-white/10 shadow-lg">
+           <div className="px-2.5 py-1.5 bg-black/65 backdrop-blur-md rounded-lg text-[8px] md:text-[9px] font-black text-white uppercase tracking-widest border border-white/10 shadow-lg">
               Rank #{breed.akc_popularity || '??'}
            </div>
         </div>
