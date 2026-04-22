@@ -3,11 +3,83 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+
+    <!-- ── Primary SEO ──────────────────────────────────────────── -->
+    <title>PupWiki — Dog Breed Analytics, Health Data & Insurance Costs</title>
+    <meta name="description" content="The most authoritative dog breed database. Browse 81 breeds, calculate insurance costs by age & state, explore health risk profiles, and find your perfect match." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://pupwiki.com/" />
+
+    <!-- ── Open Graph ────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="PupWiki" />
+    <meta property="og:title" content="PupWiki — Dog Breed Analytics, Health Data & Insurance Costs" />
+    <meta property="og:description" content="The most authoritative dog breed database. Browse 81 breeds, calculate insurance costs by age & state, explore health risk profiles, and find your perfect match." />
+    <meta property="og:url" content="https://pupwiki.com/" />
+    <meta property="og:image" content="https://pupwiki.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- ── Twitter Card ──────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@pupwiki" />
+    <meta name="twitter:title" content="PupWiki — Dog Breed Analytics, Health Data & Insurance Costs" />
+    <meta name="twitter:description" content="The most authoritative dog breed database. Health data, insurance costs by state, breed finder quiz, and expert care guides." />
+    <meta name="twitter:image" content="https://pupwiki.com/og-image.jpg" />
+
+    <!-- ── Favicon ───────────────────────────────────────────────── -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- ── Site-Level Schema.org ─────────────────────────────────── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://pupwiki.com/#website",
+          "name": "PupWiki",
+          "url": "https://pupwiki.com",
+          "description": "Authoritative dog breed database with health data, insurance cost analytics, and expert care guides for modern dog parents.",
+          "inLanguage": "en-US",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://pupwiki.com/?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://pupwiki.com/#organization",
+          "name": "PupWiki",
+          "url": "https://pupwiki.com",
+          "description": "The world's most comprehensive dog breed analytics platform, providing vet-reviewed health data, actuarial insurance cost estimates, and lifestyle-based breed matching.",
+          "foundingDate": "2025",
+          "knowsAbout": [
+            "Dog Breeds",
+            "Pet Insurance",
+            "Canine Health",
+            "Breed Analytics",
+            "Veterinary Data"
+          ],
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://pupwiki.com/logo.png",
+            "width": 200,
+            "height": 60
+          },
+          "sameAs": []
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

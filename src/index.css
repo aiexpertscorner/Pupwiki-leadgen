@@ -1,29 +1,43 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Krub:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Krub", sans-serif;
-  
-  --color-brand-primary: #F4C20D;
-  --color-brand-accent: #FFCC12;
-  --color-risk-low: #29C36A;
-  --color-risk-medium: #F0A83A;
-  --color-risk-high: #E05656;
-  
-  --color-surface-bg: #050505;
-  --color-surface-main: #101114;
-  --color-surface-card: #17181C;
-  --color-surface-soft: #1D1F24;
-  --color-surface-elevated: #20232A;
-  
-  --color-text-primary: #F5F6F7;
-  --color-text-secondary: #B6BBC6;
-  --color-text-muted: #7C838F;
-  --color-text-dim: #5E646F;
-  
-  --color-border-subtle: #2A2D35;
-  --color-divider: #23262D;
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+
+  /* ── Warm Amber / Wood Brand Palette ─────────────────────────── */
+  --color-brand-primary: #D97706;   /* amber-600  – signature warm amber  */
+  --color-brand-accent:  #F59E0B;   /* amber-400  – bright hover state     */
+  --color-brand-dark:    #92400E;   /* amber-800  – deep wood              */
+  --color-brand-muted:   #FDE68A;   /* amber-200  – soft background tint   */
+
+  /* ── Risk Severity ───────────────────────────────────────────── */
+  --color-risk-low:    #16A34A;  /* green-600  */
+  --color-risk-medium: #D97706;  /* amber-600  */
+  --color-risk-high:   #DC2626;  /* red-600    */
+
+  /* ── Warm Surface Palette (light-mode magazine) ──────────────── */
+  --color-surface-bg:       #FFFBEB;  /* amber-50  – warm parchment page bg */
+  --color-surface-main:     #FFFFFF;  /* pure white – cards & panel bg       */
+  --color-surface-card:     #FFFFFF;
+  --color-surface-base:     #FFFDF5;  /* very warm tinted white              */
+  --color-surface-soft:     #FEF3C7;  /* amber-100 – section alternation     */
+  --color-surface-elevated: #FDE68A;  /* amber-200 – accent badges           */
+
+  /* ── Editorial Ink Typography ────────────────────────────────── */
+  --color-text-primary:   #1C1917;  /* stone-900 – headline ink            */
+  --color-text-secondary: #44403C;  /* stone-700 – body text               */
+  --color-text-muted:     #78716C;  /* stone-500 – captions & labels       */
+  --color-text-dim:       #A8A29E;  /* stone-400 – meta & placeholder      */
+
+  /* ── Warm Borders ────────────────────────────────────────────── */
+  --color-border-subtle: #E7E5E4;  /* stone-200 */
+  --color-divider:       #F5F5F4;  /* stone-100 */
+}
+
+/* ── Base ─────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -34,10 +48,28 @@ h1, h2, h3, h4, h5, h6 {
   @apply font-display font-bold tracking-tight text-text-primary;
 }
 
+/* ── Reusable utility classes ─────────────────────────────────── */
 .premium-card {
-  @apply bg-surface-card border border-border-subtle rounded-3xl overflow-hidden transition-all duration-300;
+  @apply bg-surface-card border border-border-subtle rounded-3xl overflow-hidden
+         transition-all duration-300
+         shadow-[0_2px_16px_rgba(0,0,0,0.06)];
+}
+
+.premium-card:hover {
+  @apply shadow-[0_8px_40px_rgba(217,119,6,0.10)] border-brand-primary/30;
 }
 
 .gold-glow {
-  @apply shadow-[0_0_20px_rgba(244,194,13,0.08)];
+  @apply shadow-[0_0_30px_rgba(217,119,6,0.14)];
+}
+
+/* Amber pill label */
+.tag-amber {
+  @apply inline-flex items-center px-2.5 py-1 rounded-full
+         bg-brand-primary/10 text-brand-dark text-[10px] font-semibold uppercase tracking-wide;
+}
+
+/* Section rule accent (replaces big uppercase eyebrows) */
+.section-eyebrow {
+  @apply inline-flex items-center gap-2 text-brand-dark text-[11px] font-bold uppercase tracking-[0.2em];
 }
