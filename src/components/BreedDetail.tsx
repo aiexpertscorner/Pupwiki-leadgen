@@ -21,7 +21,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { breeds, BreedData } from '@/src/data/breeds';
-import { affiliateProducts } from '@/src/data/affiliate';
+import { ChefpawAd, CrownAndPawAd, PendingInsuranceAd } from './ads';
 import { SmartLeadWidget } from './SmartLeadWidget';
 import { SmartImage } from './ui/SmartImage';
 import { InsuranceComparison } from './InsuranceComparison';
@@ -110,8 +110,46 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
   const lifetimeCost = breed.ranking_data?.lifetime_cost_usd || (breed.avgMonthlyInsurance * 12 * 12);
   const annualFood = breed.ranking_data?.annual_food_cost || 500;
 
+  const energyLevelStr: 'active' | 'regular' | 'calm' =
+    breed.traits.energyLevel >= 7 ? 'active' :
+    breed.traits.energyLevel >= 4 ? 'regular' : 'calm';
+
+  const sizeCategoryStr: 'large' | 'medium' | 'small' =
+    breed.size?.toLowerCase() === 'large' ? 'large' :
+    breed.size?.toLowerCase() === 'small' ? 'small' : 'medium';
+
+  const relatedByGroup = breed.akc_group
+    ? breeds.filter(b => b.akc_group === breed.akc_group && b.slug !== breed.slug).slice(0, 4)
+    : [];
+
+  const breedSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pupwiki.com/" },
+          ...(breed.akc_group ? [{ "@type": "ListItem", "position": 2, "name": breed.akc_group, "item": `https://pupwiki.com/breeds/group/${breed.akc_group.toLowerCase().replace(/\s+/g, '-')}/` }] : []),
+          { "@type": "ListItem", "position": breed.akc_group ? 3 : 2, "name": breed.name, "item": `https://pupwiki.com/breeds/${breed.slug}/` }
+        ]
+      },
+      {
+        "@type": "Article",
+        "headline": breed.seo?.title || `${breed.name} Breed Guide — Health Data & Insurance Costs`,
+        "description": breed.seo?.description || breed.description,
+        "url": `https://pupwiki.com/breeds/${breed.slug}/`,
+        "image": breed.image,
+        "dateModified": new Date().toISOString().split('T')[0],
+        "author": { "@type": "Organization", "name": "PupWiki Editorial Team" },
+        "publisher": { "@type": "Organization", "name": "PupWiki", "url": "https://pupwiki.com" }
+      }
+    ]
+  };
+
   return (
     <div className="space-y-6 md:space-y-12 pb-24 selection:bg-brand-primary/20 bg-surface-bg text-text-secondary relative">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breedSchema) }} />
+
       {/* Mobile Sticky Sub-Nav: High Engagement Discovery */}
       <div className="md:hidden sticky top-0 z-[100] bg-surface-main/80 backdrop-blur-xl border-b border-divider px-4 py-2 flex items-center justify-between shadow-2xl">
         <button 
@@ -258,6 +296,29 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
             </motion.div>
          </div>
       </div>
+
+      {/* Breadcrumb */}
+      <nav aria-label="breadcrumb" className="max-w-7xl mx-auto px-4 -mt-4">
+        <ol className="flex items-center flex-wrap gap-1.5 text-[11px] text-text-muted">
+          <li>
+            <button onClick={() => onNavigate?.('home')} className="hover:text-brand-primary transition-colors font-medium">
+              Home
+            </button>
+          </li>
+          <ChevronRight size={11} className="text-text-dim" />
+          {breed.akc_group && (
+            <>
+              <li>
+                <button onClick={() => onNavigate?.('home')} className="hover:text-brand-primary transition-colors font-medium">
+                  {breed.akc_group}
+                </button>
+              </li>
+              <ChevronRight size={11} className="text-text-dim" />
+            </>
+          )}
+          <li className="text-text-primary font-semibold">{breed.name}</li>
+        </ol>
+      </nav>
 
       {/* Main Content Grid */}
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-16">
@@ -461,6 +522,49 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
                            <ChevronRight size={12} />
                         </div>
                      </div>
+                  </motion.div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Related Breeds by AKC Group */}
+          {relatedByGroup.length > 0 && (
+            <section className="space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-brand-primary/10 rounded-2xl text-brand-primary border border-brand-primary/20">
+                  <Dog size={24} />
+                </div>
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-display uppercase font-black text-text-primary">
+                    More {breed.akc_group || 'Related'} Breeds
+                  </h2>
+                  <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] mt-0.5">Same group · Similar traits</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {relatedByGroup.map((rb) => (
+                  <motion.div
+                    key={rb.slug}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => onNavigate?.({ type: 'detail', slug: rb.slug })}
+                    className="group cursor-pointer bg-surface-main border border-divider rounded-2xl overflow-hidden hover:border-brand-primary/40 transition-all"
+                  >
+                    <div className="aspect-square overflow-hidden">
+                      <SmartImage
+                        src={rb.image}
+                        alt={rb.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="p-3">
+                      <h4 className="text-[11px] font-black text-text-primary uppercase tracking-tight group-hover:text-brand-primary transition-colors leading-snug">{rb.name}</h4>
+                      <div className="flex items-center gap-1 mt-1 text-brand-primary">
+                        <span className="text-[9px] font-black uppercase tracking-widest">View Profile</span>
+                        <ChevronRight size={10} />
+                      </div>
+                    </div>
                   </motion.div>
                 ))}
               </div>
@@ -687,70 +791,41 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
             </div>
           </section>
 
-          {/* Expert Partner Network: Affiliate Bento */}
-          <section id="care" className="scroll-mt-32 space-y-12">
-             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-4 md:p-5 bg-brand-primary/10 rounded-2xl md:rounded-[24px] text-brand-primary border border-brand-primary/20 shadow-2xl">
-                    <ShieldCheck size={36} className="md:size-40" />
-                  </div>
-                  <div className="space-y-1">
-                    <h2 className="text-3xl md:text-5xl font-display uppercase font-black text-text-primary tracking-tighter">
-                      {customName ? `${customName}'s Favorites` : "Gifts They'll Love"}
-                    </h2>
-                    <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.4em]">Authorized Breed Selection 2026</p>
-                  </div>
-                </div>
-                <div className="h-px md:flex-1 bg-divider opacity-40" />
-                <div className="flex items-center gap-2 text-brand-primary">
-                   <div className="w-2 h-2 rounded-full bg-brand-primary animate-pulse" />
-                   <span className="text-[9px] font-black uppercase tracking-[0.2em]">Verified Supply Chain</span>
-                </div>
-             </div>
-             
-             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
-                {(Array.isArray(breed.product_picks) ? breed.product_picks : affiliateProducts).slice(0, 4).map((product: any) => (
-                  <motion.a 
-                    key={product.id || product.name} 
-                    href={product.url || '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ y: -12 }}
-                    className="p-8 md:p-12 bg-surface-main border border-divider rounded-[48px] md:rounded-[64px] premium-card group flex flex-col shadow-2xl hover:border-brand-primary transition-all relative overflow-hidden"
-                  >
-                     <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-brand-primary/10 transition-colors" />
-                     
-                     <div className="relative h-64 md:h-80 mb-10 rounded-[40px] overflow-hidden bg-surface-base shadow-2xl group-hover:shadow-brand-primary/10 transition-all">
-                        <SmartImage 
-                          src={product.image || "https://picsum.photos/seed/pet/800/800"} 
-                          alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 brightness-90 group-hover:brightness-105"
-                        />
-                        <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-surface-bg via-surface-bg/40 to-transparent">
-                           <div className="px-4 py-2 bg-brand-primary/95 backdrop-blur-md rounded-xl text-surface-bg text-[10px] font-black uppercase tracking-[0.25em] inline-block shadow-2xl">
-                             Handpicked
-                           </div>
-                        </div>
-                     </div>
+          {/* Contextual Affiliate Recommendations */}
+          <section id="care" className="scroll-mt-32 space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 md:p-4 bg-brand-primary/10 rounded-2xl text-brand-primary border border-brand-primary/20 shadow-lg">
+                <ShieldCheck size={28} />
+              </div>
+              <div>
+                <h2 className="text-3xl md:text-4xl font-display uppercase font-black text-text-primary">
+                  {customName ? `${customName}'s Picks` : 'Expert Recommendations'}
+                </h2>
+                <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.4em] mt-1">Curated for {breed.name} owners</p>
+              </div>
+            </div>
 
-                     <div className="flex justify-between items-start mb-8">
-                       <span className="px-4 py-2 bg-brand-primary/10 text-brand-primary rounded-xl text-[10px] font-black uppercase tracking-widest border border-brand-primary/20 shadow-lg">Official Care Pick</span>
-                       <div className="flex flex-col items-end">
-                          <span className="text-3xl font-black text-brand-primary tracking-tighter leading-none">${product.price || '49'}</span>
-                          <span className="text-[10px] font-bold text-text-dim uppercase tracking-widest mt-1">Aprox Value</span>
-                       </div>
-                     </div>
+            {/* ChefPaw — active energy or large size breeds */}
+            {(energyLevelStr === 'active' || sizeCategoryStr === 'large') && (
+              <ChefpawAd
+                breedName={breed.name}
+                energyLevel={energyLevelStr}
+                sizeCategory={sizeCategoryStr}
+              />
+            )}
 
-                     <h4 className="text-3xl font-black uppercase tracking-tight text-text-primary mb-5 group-hover:text-brand-primary transition-colors leading-none">{product.name}</h4>
-                     <p className="text-sm md:text-base text-text-muted leading-relaxed font-bold mb-12 flex-1 italic opacity-70 line-clamp-3">"{product.description || product.recommendation_reason || "Expertly curated for maintenance excellence."}"</p>
-                     
-                     <div className="w-full py-5 md:py-6 bg-surface-base border-2 border-divider rounded-[24px] text-[11px] font-black uppercase tracking-[0.3em] text-text-primary group-hover:bg-brand-primary group-hover:text-surface-bg group-hover:border-brand-primary transition-all text-center shadow-xl active:scale-95 flex items-center justify-center gap-3">
-                        Acquire on {product.merchant || "Partner Site"}
-                        <ChevronRight size={16} />
-                     </div>
-                  </motion.a>
-                ))}
-             </div>
+            {/* Crown & Paw — always on breed detail pages */}
+            <CrownAndPawAd breedName={breed.name} />
+
+            {/* ChefPaw compact for calm/medium/small breeds that didn't get full card */}
+            {energyLevelStr !== 'active' && sizeCategoryStr !== 'large' && (
+              <ChefpawAd
+                breedName={breed.name}
+                energyLevel={energyLevelStr}
+                sizeCategory={sizeCategoryStr}
+                variant="compact"
+              />
+            )}
           </section>
 
           {/* Clinical Verdict: Authority Summary */}
@@ -835,10 +910,13 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
                   </p>
                 </div>
 
-                <button className="relative z-10 w-full py-5 md:py-6 bg-brand-primary hover:bg-brand-accent text-surface-bg rounded-[20px] font-black uppercase text-xs tracking-[0.25em] transition-all shadow-2xl shadow-brand-primary/30 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3">
-                  Inquire Now
-                  <ArrowRight size={16} />
-                </button>
+                <div className="relative z-10">
+                  <PendingInsuranceAd
+                    breedName={breed.name}
+                    estimatedMonthlyCost={monthlyPremium ? Math.round(monthlyPremium) : undefined}
+                    stateCode={stateCode}
+                  />
+                </div>
               </div>
 
               {/* Maintenance Protocols Bento */}

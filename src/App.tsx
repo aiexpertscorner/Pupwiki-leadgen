@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from 'motion/react';
 
 import { MethodologyPage, EditorialPolicy } from '@/src/components/InfoPages';
 import { About } from '@/src/pages/About';
+import { CrownAndPawAd } from '@/src/components/ads';
 
 type AppView = 'home' | 'quiz' | 'discovery-quiz' | 'custom' | 'match-results' | 'detail' | 'methodology' | 'editorial' | 'about';
 
@@ -27,10 +28,15 @@ export default function App() {
   const [selectedTemperament, setSelectedTemperament] = useState<string[]>([]);
   const [selectedOrigin, setSelectedOrigin] = useState<string | 'All'>('All');
   const [selectedType, setSelectedType] = useState<'All' | 'Purebred' | 'Crossbreed'>('All');
+  const [selectedGroup, setSelectedGroup] = useState<string | 'All'>('All');
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
   const origins = useMemo(() => {
     return Array.from(new Set(breeds.map(b => b.origin))).sort();
+  }, []);
+
+  const uniqueGroups = useMemo(() => {
+    return Array.from(new Set(breeds.map(b => b.akc_group).filter(Boolean))).sort() as string[];
   }, []);
 
   const filteredBreeds = useMemo(() => {
@@ -38,15 +44,16 @@ export default function App() {
       const matchSearch = b.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchSize = selectedSize === 'All' || b.size === selectedSize;
       const matchOrigin = selectedOrigin === 'All' || b.origin === selectedOrigin;
-      const matchType = selectedType === 'All' || 
-        (selectedType === 'Purebred' && !b.isCrossbreed) || 
+      const matchType = selectedType === 'All' ||
+        (selectedType === 'Purebred' && !b.isCrossbreed) ||
         (selectedType === 'Crossbreed' && b.isCrossbreed);
-      const matchTemp = selectedTemperament.length === 0 || 
+      const matchTemp = selectedTemperament.length === 0 ||
         selectedTemperament.every(t => b.temperament.includes(t));
-      
-      return matchSearch && matchSize && matchOrigin && matchTemp && matchType;
+      const matchGroup = selectedGroup === 'All' || b.akc_group === selectedGroup;
+
+      return matchSearch && matchSize && matchOrigin && matchTemp && matchType && matchGroup;
     });
-  }, [searchQuery, selectedSize, selectedOrigin, selectedTemperament, selectedType]);
+  }, [searchQuery, selectedSize, selectedOrigin, selectedTemperament, selectedType, selectedGroup]);
 
   const selectedBreedData = useMemo(() => {
     return breeds.find(b => b.slug === selectedBreedSlug);
@@ -172,6 +179,86 @@ export default function App() {
                  </div>
               </section>
 
+              {/* Taxonomy Hub: Browse by Size & Group */}
+              <section className="max-w-7xl mx-auto px-4 space-y-10">
+                {/* Size Hubs */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <span className="section-eyebrow">
+                      <Dog size={12} className="text-brand-primary" />
+                      Browse by Size
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    {(['Small', 'Medium', 'Large'] as BreedSize[]).map(size => {
+                      const count = breeds.filter(b => b.size?.toLowerCase() === size.toLowerCase()).length;
+                      const isActive = selectedSize === size;
+                      return (
+                        <button
+                          key={size}
+                          onClick={() => {
+                            setSelectedSize(isActive ? 'All' : size);
+                            setSelectedGroup('All');
+                            document.getElementById('breed-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          }}
+                          className={`p-5 rounded-2xl border text-left transition-all ${
+                            isActive
+                              ? 'bg-brand-primary border-brand-primary text-white shadow-md shadow-brand-primary/20'
+                              : 'bg-surface-main border-border-subtle hover:border-brand-primary/40 hover:shadow-sm'
+                          }`}
+                        >
+                          <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${isActive ? 'text-amber-100' : 'text-text-muted'}`}>{count} breeds</p>
+                          <p className={`text-lg font-display font-black ${isActive ? 'text-white' : 'text-text-primary'}`}>{size}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* AKC Group Hubs */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <span className="section-eyebrow">
+                      <Sparkles size={12} className="text-brand-primary" />
+                      Browse by AKC Group
+                    </span>
+                  </div>
+                  <div className="flex gap-3 flex-wrap">
+                    {uniqueGroups.map(group => {
+                      const isActive = selectedGroup === group;
+                      return (
+                        <button
+                          key={group}
+                          onClick={() => {
+                            setSelectedGroup(isActive ? 'All' : group);
+                            setSelectedSize('All');
+                            document.getElementById('breed-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          }}
+                          className={`px-4 py-2 rounded-full border text-xs font-semibold transition-all ${
+                            isActive
+                              ? 'bg-brand-primary border-brand-primary text-white'
+                              : 'bg-surface-main border-border-subtle text-text-secondary hover:border-brand-primary/50 hover:text-brand-dark'
+                          }`}
+                        >
+                          {group}
+                        </button>
+                      );
+                    })}
+                    {(selectedSize !== 'All' || selectedGroup !== 'All') && (
+                      <button
+                        onClick={() => { setSelectedSize('All'); setSelectedGroup('All'); }}
+                        className="px-4 py-2 rounded-full border border-dashed border-text-dim text-xs font-semibold text-text-muted hover:border-brand-primary/40 transition-colors"
+                      >
+                        Clear filter ×
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Crown & Paw editorial gallery */}
+                <CrownAndPawAd variant="gallery" />
+              </section>
+
               {/* Feed Content */}
               <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-4 gap-12 pt-12">
                 <aside className="hidden lg:block space-y-10 border-r border-divider pr-12 h-fit sticky top-24">
@@ -211,7 +298,7 @@ export default function App() {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+                  <div id="breed-grid" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
                     {filteredBreeds.map((breed) => (
                       <div key={breed.id} onClick={() => {
                           setSelectedBreedSlug(breed.slug);
