@@ -52,7 +52,7 @@ export const Header = ({ onNavigate, currentView }: NavProps) => {
         {/* ── Top editorial ribbon ── */}
         <div className="bg-brand-dark text-amber-100 hidden sm:block">
           <p className="max-w-7xl mx-auto px-4 py-1.5 text-center text-[10px] font-semibold uppercase tracking-[0.22em]">
-            ✦&nbsp; Vet-Reviewed Data &nbsp;·&nbsp; 81 Breeds &nbsp;·&nbsp; All 50 States &nbsp;·&nbsp; Updated April 2026 &nbsp;✦
+            ✦&nbsp; Actuarial Data &nbsp;·&nbsp; 81 Breeds &nbsp;·&nbsp; All 50 States &nbsp;·&nbsp; Updated April 2026 &nbsp;✦
           </p>
         </div>
 
@@ -221,7 +221,7 @@ export const Footer = ({ onNavigate }: { onNavigate: (view: any) => void }) => {
               and lifestyle-matched breed discovery.
             </p>
             <p className="text-xs text-stone-500 leading-relaxed max-w-xs">
-              Vet-reviewed · Actuarial sourced · Editorially independent
+              Source-referenced · Actuarial data · Editorially independent
             </p>
           </div>
 

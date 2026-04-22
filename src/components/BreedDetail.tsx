@@ -204,7 +204,7 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
               >
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-primary rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-surface-bg shadow-2xl shadow-brand-primary/30">
                   <ShieldCheck size={14} />
-                  Verified Info
+                  Breed Data
                 </div>
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-surface-main/90 backdrop-blur-md rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] border border-brand-primary/30 text-brand-primary shadow-xl">
                   Rank #{breed.akc_popularity || '??'}
@@ -387,7 +387,7 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
               <div className="space-y-10 order-1 lg:order-2">
                 <div className="space-y-4">
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-primary/10 rounded-lg text-[9px] font-black text-brand-primary uppercase tracking-[0.2em] border border-brand-primary/20">
-                     Expert Analysis
+                     Breed Profile
                   </div>
                   <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-text-primary leading-tight">What to Expect</h3>
                   <p className="text-sm md:text-base text-text-muted leading-relaxed font-medium">
@@ -571,7 +571,7 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
             </section>
           )}
 
-          {/* Diagnostic Registry: Clinical Table & Mobile Cards */}
+          {/* Health Information Section */}
           <section className="space-y-8">
             <PriorityHighlight type="health" label="Health & Wellness" />
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -580,14 +580,25 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
                   <HeartPulse size={32} className="md:size-36" />
                 </div>
                 <div className="space-y-1">
-                   <h2 className="text-3xl md:text-5xl font-display uppercase font-black text-text-primary lg:tracking-tighter">Health Snapshot</h2>
-                   <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.4em]">Personalized Risk & Care Guide</p>
+                   <h2 className="text-3xl md:text-5xl font-display uppercase font-black text-text-primary lg:tracking-tighter">Health Overview</h2>
+                   <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.4em]">Commonly Reported Breed Health Information</p>
                 </div>
               </div>
               <div className="px-4 py-2 bg-surface-elevated rounded-xl border border-divider flex items-center gap-3">
                  <div className="w-2 h-2 rounded-full bg-risk-high animate-pulse" />
-                 <span className="text-[9px] font-black uppercase tracking-widest text-brand-primary">Based on standard veterinary data</span>
+                 <span className="text-[9px] font-black uppercase tracking-widest text-brand-primary">Compiled from public breed-authority sources</span>
               </div>
+            </div>
+
+            {/* Health data disclaimer */}
+            <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 leading-relaxed">
+              <Info size={14} className="shrink-0 mt-0.5 text-amber-600" />
+              <p>
+                <strong>For information only.</strong> The conditions below are commonly reported
+                for this breed in public veterinary literature and breed-health registries.
+                They are not a diagnosis or prediction for any individual dog.
+                Always consult a licensed veterinarian for health guidance specific to your pet.
+              </p>
             </div>
 
             {/* NEW: Breed Specific Health Insights from Profiles */}
@@ -596,7 +607,7 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
                  <div className="space-y-6">
                     <h3 className="text-xl font-black uppercase tracking-widest text-brand-primary flex items-center gap-3">
                       <Zap size={18} />
-                      At-Home Surveillance
+                      Signs to Watch For
                     </h3>
                     <div className="space-y-4">
                       {healthProfile.common_issues.map((issue, idx) => (
@@ -615,7 +626,7 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
                  <div className="space-y-6">
                     <h3 className="text-xl font-black uppercase tracking-widest text-brand-primary flex items-center gap-3">
                       <ShieldCheck size={18} />
-                      Critical Care Tips
+                      Breed Care Notes
                     </h3>
                     <div className="p-6 bg-brand-primary/5 border border-brand-primary/10 rounded-2xl italic font-bold text-text-secondary leading-relaxed">
                       "{healthProfile.care_tips}"
@@ -623,7 +634,7 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
                     <div className="flex items-center gap-4 p-5 bg-surface-base border border-divider rounded-2xl">
                       <Activity className="text-brand-primary" size={24} />
                       <p className="text-[10px] font-black uppercase tracking-widest leading-snug">
-                        Recommended Checkups: Age {age} monitoring intensified for {breed.name} longevity markers.
+                        Routine vet checkups are recommended for all dogs. Frequency may increase as your dog ages — ask your veterinarian what's right for your {breed.name}.
                       </p>
                     </div>
                  </div>
@@ -653,7 +664,7 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
                     </div>
                     <p className="text-xs font-bold text-text-muted italic opacity-70">"{risk.description}"</p>
                     <div className="flex justify-between items-center pt-4 border-t border-divider/50">
-                       <span className="text-[9px] font-black uppercase tracking-[0.2em] text-text-dim">Est. Treatment</span>
+                       <span className="text-[9px] font-black uppercase tracking-[0.2em] text-text-dim">Est. Cost Range</span>
                        <span className="text-lg font-black text-brand-primary tracking-tighter">${risk.avgCost.toLocaleString()}</span>
                     </div>
                  </motion.div>
@@ -666,9 +677,9 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
               <table className="w-full text-left border-collapse border-spacing-0 relative z-10">
                 <thead>
                   <tr className="bg-surface-base/80 backdrop-blur-md text-[10px] font-black uppercase tracking-[0.3em] text-text-dim border-b border-divider">
-                    <th className="px-12 py-10">Hereditary Condition</th>
-                    <th className="px-12 py-10">Risk Stratum</th>
-                    <th className="px-12 py-10">Clinical Cost Assessment</th>
+                    <th className="px-12 py-10">Commonly Reported Condition</th>
+                    <th className="px-12 py-10">Reported Frequency</th>
+                    <th className="px-12 py-10">Est. Treatment Cost Range</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-divider/20">
@@ -840,7 +851,7 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
                     <Activity size={14} />
                     Final Thoughts
                  </div>
-                 <h2 className="text-3xl md:text-7xl font-display uppercase font-black text-text-primary tracking-tighter leading-[0.9]">Our Expert Verdict</h2>
+                 <h2 className="text-3xl md:text-7xl font-display uppercase font-black text-text-primary tracking-tighter leading-[0.9]">About This Breed</h2>
                </div>
                
                <p className="text-base md:text-2xl text-text-muted font-bold leading-relaxed italic opacity-80 border-l-4 border-brand-primary pl-6 md:pl-12">
@@ -884,10 +895,10 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
 
                 <div className="space-y-6 relative z-10">
                   <div className="p-8 bg-surface-base rounded-[32px] border border-divider shadow-inner group/stat hover:border-brand-primary/40 transition-colors">
-                    <span className="text-[9px] font-black text-text-dim uppercase tracking-widest block mb-3">Health Score</span>
+                    <span className="text-[9px] font-black text-text-dim uppercase tracking-widest block mb-3">AKC Popularity</span>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-5xl font-black text-brand-primary tracking-tighter">94<span className="text-2xl">%</span></span>
-                      <span className="text-[10px] font-bold text-text-dim uppercase tracking-widest">Wellness Index</span>
+                      <span className="text-5xl font-black text-brand-primary tracking-tighter">#{breed.akc_popularity || '—'}</span>
+                      <span className="text-[10px] font-bold text-text-dim uppercase tracking-widest">Most Popular</span>
                     </div>
                   </div>
                   
@@ -906,7 +917,7 @@ export const BreedDetail = ({ breed, customName, age = 1, stateCode = 'CA', prio
                 <div className="flex gap-4 items-start p-6 bg-brand-primary/5 rounded-[24px] border border-brand-primary/10 relative z-10">
                   <ShieldCheck className="text-brand-primary shrink-0" size={20} />
                   <p className="text-[10px] text-text-secondary font-black leading-tight uppercase tracking-wide opacity-80">
-                    Our data suggests a {breed.healthRisks.length > 5 ? 'High' : 'Stable'} health risk index.
+                    {breed.healthRisks.length} commonly reported condition{breed.healthRisks.length !== 1 ? 's' : ''} documented for this breed. Always consult your vet.
                   </p>
                 </div>
 
