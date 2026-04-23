@@ -60,18 +60,20 @@ export const Header = ({ onNavigate, currentView }: NavProps) => {
         <div className="max-w-7xl mx-auto px-4 h-[4.5rem] flex items-center justify-between gap-6">
 
           {/* Logo */}
-          <button
-            onClick={() => handleNav('home')}
-            className="flex items-center gap-2.5 group shrink-0"
-            aria-label="PupWiki home"
-          >
-            <div className="w-9 h-9 bg-brand-primary rounded-xl flex items-center justify-center text-white shadow-md shadow-brand-primary/25 group-hover:scale-105 transition-transform">
-              <Dog size={20} />
-            </div>
-            <span className="text-[1.35rem] font-display font-black text-text-primary leading-none select-none">
-              Pup<span className="text-brand-primary italic">Wiki</span>
-            </span>
-          </button>
+<button
+  type="button"
+  onClick={() => handleNav('home')}
+  className="flex items-center shrink-0 group"
+  aria-label="PupWiki home"
+>
+  <img
+    src="/Pupwiki-logo.png"
+    alt="PupWiki"
+    className="block h-9 w-auto sm:h-10 md:h-11 object-contain group-hover:scale-[1.02] transition-transform"
+    loading="eager"
+    decoding="async"
+  />
+</button>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-0.5" aria-label="Main navigation">
