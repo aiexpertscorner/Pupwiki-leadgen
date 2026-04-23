@@ -69,7 +69,7 @@ export const Header = ({ onNavigate, currentView }: NavProps) => {
   <img
     src="/Pupwiki-logo.png"
     alt="PupWiki"
-    className="block h-9 w-auto sm:h-10 md:h-11 object-contain group-hover:scale-[1.02] transition-transform"
+    className="block h-10 w-auto sm:h-11 md:h-12 object-contain group-hover:scale-[1.02] transition-transform"
     loading="eager"
     decoding="async"
   />
